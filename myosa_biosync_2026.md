@@ -7,9 +7,11 @@ tags:
   - health-monitoring
   - wearable
   - iot
----
 
-> BioSync exists to change that.
+<p align="center">
+  <img src="/cover.png" width="800"><br/>
+  <i>cover.png</i>
+</p>
 
 ---
 
@@ -55,17 +57,17 @@ The ESP32 has exactly one WiFi responsibility: publish a 300-byte JSON vitals pa
 </p>
 
 <p align="center">
-  <img src="/assets/images/BioSync/biosync_hardware.png" width="800"><br/>
+  <img src="/biosync_hardware.png" width="800"><br/>
   <i>BioSync Hardware</i>
 </p>
 
 <p align="center">
-  <img src="/assets/images/BioSync/local_dashboard_home_page.png" width="800"><br/>
+  <img src="/local_dashboard_home_page.png" width="800"><br/>
   <i>Local Dashboard Home Page</i>
 </p>
 
 <p align="center">
-  <img src="/assets/images/BioSync/grafana_dashboard_1.png" width="800"><br/>
+  <img src="/grafana_dashboard_1.png" width="800"><br/>
   <i>Grafana Dashboard</i>
 </p>
 
