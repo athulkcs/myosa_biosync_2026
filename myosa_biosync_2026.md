@@ -50,7 +50,7 @@ The ESP32 has exactly one WiFi responsibility: publish a 300-byte JSON vitals pa
 ### Images
 
 <p align="center">
-  <img src="/assets/images/BioSync/cover.png" width="800"><br/>
+  <img src="/cover.png" width="800"><br/>
   <i>BioSync Prototype</i>
 </p>
 
