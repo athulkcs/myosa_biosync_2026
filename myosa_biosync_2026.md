@@ -75,15 +75,15 @@ The ESP32 has exactly one WiFi responsibility: publish a 300-byte JSON vitals pa
 
 **Presentation**
 
-<video controls width="100%">
+[<video controls width="100%">
   <source src="/presentation.mp4" type="video/mp4">
-</video>
+</video>](https://github.com/user-attachments/assets/b8237d21-2828-4da1-aef9-1e99e509c851)
 
 **Demo**
 
-<video controls width="100%">
+[<video controls width="100%">
   <source src="/demo.mp4" type="video/mp4">
-</video>
+</video>](https://github.com/user-attachments/assets/298202d3-5555-4bc8-a8f7-e69f5dcea371)
 
 ---
 
