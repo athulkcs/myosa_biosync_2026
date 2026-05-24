@@ -7,7 +7,6 @@ tags:
   - health-monitoring
   - wearable
   - iot
-
 <p align="center">
   <img src="/cover.png" width="800"><br/>
   <i>cover.png</i>
