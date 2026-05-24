@@ -23,15 +23,15 @@ We sincerely thank our faculty mentor and the institution for supporting the dev
 
 ## Overview
 
-Every 2 seconds, someone dies from a cardiovascular event — not because medicine lacks solutions, but because the warning signs went unnoticed. BioSync exists to change that.
+Every 2 seconds, someone dies from a cardiovascular event :  not because medicine lacks solutions, but because the warning signs went unnoticed. BioSync exists to change that.
 
 BioSync is a wrist-worn, real-time health monitoring system built entirely on the MYOSA ESP32 platform. It continuously tracks heart rate (BPM), blood oxygen saturation (SpO₂), HRV-based Stress Index, fall detection, motion, temperature, humidity, and barometric pressure, then classifies the wearer's state as Normal, Caution, or Critical every second.
 
 When an anomaly is detected, BioSync responds across three simultaneous layers:
 
-* On-arm — OLED display updates + buzzer + vibration motor fire within 1 second
-* Local network — React dashboard (running on a laptop) turns amber or red, visible on any browser on the same WiFi
-* Remote — MQTT stream to EMQX broker, accessible globally using Grafana.
+* On-arm :  OLED display updates + buzzer + vibration motor fire within 1 second
+* Local network :  React dashboard (running on a laptop) turns amber or red, visible on any browser on the same WiFi
+* Remote :  MQTT stream to EMQX broker, accessible globally using Grafana.
 
 The ESP32 has exactly one WiFi responsibility: publish a 300-byte JSON vitals packet every 2 seconds via MQTT. All visualisation, fleet management, and trend charting lives in the React dashboard, keeping the ESP32 lean, stable, and focused entirely on sensing and alerting.
 
@@ -97,15 +97,15 @@ BioSync drives five I2C sensors and one GPIO sensor simultaneously from a single
 | BMP180 | Barometric pressure + ambient temperature | I2C | 0x77 |
 | APDS9960 | Gesture detection (left/right swipe) | I2C | 0x39 |
 | SSD1306 OLED | 128×32 display | I2C | 0x3C |
-| DHT11 | Temperature + humidity | GPIO27 | — |
+| DHT11 | Temperature + humidity | GPIO27 | :  |
 
 All sensors are polled concurrently on Core 0 using millis()-based timing with no blocking delay() calls in the main loop. Core 1 handles WiFi and MQTT exclusively, so sensor acquisition is never interrupted by network activity.
 
 ### 2. BPM, SpO₂, and HRV (RMSSD) from MAX30102
 
-Heart Rate is detected using the SparkFun checkForBeat() PBA algorithm on the IR channel. Each detected R-peak timestamps a new R-R interval. A personal BPM baseline is accumulated over the first 30 seconds of wear (minimum 5 readings) and locked — this baseline feeds the HR elevation component of the Stress Index.
+Heart Rate is detected using the SparkFun checkForBeat() PBA algorithm on the IR channel. Each detected R-peak timestamps a new R-R interval. A personal BPM baseline is accumulated over the first 30 seconds of wear (minimum 5 readings) and locked :  this baseline feeds the HR elevation component of the Stress Index.
 
-SpO₂ uses the SparkFun maxim_heart_rate_and_oxygen_saturation() algorithm from the MYOSA kit. 100 samples of RED + IR are buffered; after each calculation the last 25 are kept and 75 more collected — giving continuous SpO₂ updates roughly every 3–4 seconds. Only values in the range 70–100% with a valid flag are accepted.
+SpO₂ uses the SparkFun maxim_heart_rate_and_oxygen_saturation() algorithm from the MYOSA kit. 100 samples of RED + IR are buffered; after each calculation the last 25 are kept and 75 more collected :  giving continuous SpO₂ updates roughly every 3–4 seconds. Only values in the range 70–100% with a valid flag are accepted.
 
 HRV (RMSSD) is computed from the last 20 R-R intervals:
 
@@ -117,7 +117,7 @@ Lower RMSSD = reduced autonomic variability = higher stress load. This is the hi
 
 Finger detection threshold: IR channel > 50,000 counts. When no finger is detected, BPM and SpO₂ are cleared and the Stress Index HRV/HR components contribute zero.
 
-### 3. Stress Index — 4-Component Weighted Fusion
+### 3. Stress Index :  4-Component Weighted Fusion
 
 The Stress Index is a single 0–100 score computed every second from four physiological and environmental inputs, each normalised independently to [0, 1]:
 
@@ -146,7 +146,7 @@ CAUTION fires if:
 
 NORMAL otherwise.
 
-### 5. Actuator Response — Buzzer and Vibration Motor
+### 5. Actuator Response :  Buzzer and Vibration Motor
 
 Both actuators are GPIO-driven through BC547 NPN transistors (no direct GPIO current through the motor or buzzer):
 
@@ -158,11 +158,11 @@ Both actuators are GPIO-driven through BC547 NPN transistors (no direct GPIO cur
 
 The CAUTION vibration pattern is fully non-blocking, implemented with millis() comparison. The 30-second repeat cycle resets automatically when state changes.
 
-### 6. OLED Display — Three Screens
+### 6. OLED Display :  Three Screens
 
 The 128×32 SSD1306 supports four text rows at size 1 (6×8 px per character).
 
-Screen 1 — Full Vitals (default):
+Screen 1 :  Full Vitals (default):
 
 ```
 BPM:74    SpO2:98%
@@ -173,7 +173,7 @@ MOV:LOW   1013hPa
 
 Row 2 shows a 50-pixel progress bar for the Stress Index with a live state label.
 
-Screen 2 — Alert History:
+Screen 2 :  Alert History:
 
 ```
 -- RECENT ALERTS --
@@ -193,13 +193,13 @@ STR:82  FALL:NO
 SEEK HELP NOW
 ```
 
-Flashes at 2 Hz by alternating WHITE-on-BLACK and BLACK-on-WHITE. Cannot be dismissed by gesture — persists until state clears.
+Flashes at 2 Hz by alternating WHITE-on-BLACK and BLACK-on-WHITE. Cannot be dismissed by gesture :  persists until state clears.
 
 Gesture switching: Left or right swipe on the APDS9960 cycles between Screen 1 and Screen 2. The APDS9960 sensor object lives inside oled.cpp since it is the only consumer of gesture data.
 
 ### 7. MQTT Streaming to React Dashboard
 
-Core 1 runs a dedicated FreeRTOS task that handles WiFi connection and MQTT publishing only — no web server, no HTML serving. Every 2 seconds it publishes this JSON payload:
+Core 1 runs a dedicated FreeRTOS task that handles WiFi connection and MQTT publishing only :  no web server, no HTML serving. Every 2 seconds it publishes this JSON payload:
 
 ```json
 {
@@ -222,7 +222,7 @@ Core 1 runs a dedicated FreeRTOS task that handles WiFi connection and MQTT publ
 
 Field names are case-sensitive and match the React dashboard parser exactly. The device_id field in both the topic path and the JSON body enables multi-device fleet mode with zero firmware changes beyond config.h.
 
-Auto-reconnect is implemented with a 5-second cooldown on both WiFi and MQTT — no blocking retries in the Core 1 loop.
+Auto-reconnect is implemented with a 5-second cooldown on both WiFi and MQTT :  no blocking retries in the Core 1 loop.
 
 ### 8. Grafana Dashboard
 
@@ -286,7 +286,7 @@ Adafruit Unified Sensor by Adafruit
 ```
 
 4. Open `BioSync/BioSync.ino` in Arduino IDE.
-5. Edit `config.h` — set your hotspot credentials.
+5. Edit `config.h` :  set your hotspot credentials.
 6. Select board: ESP32 Dev Module, port: your USB-serial port.
 7. Upload. Open Serial Monitor at 115200 baud to watch the boot sequence and sensor readings.
 
@@ -304,25 +304,25 @@ npm run dev
 
 ### 1. Enterprise Backend & Cloud Analytics
 
-* **Espressif Systems ESP32** — Main IoT Controller
-* **MQTT Protocol** — Real-time IoT Communication
-* **Mosquitto MQTT Broker** — MQTT Broker for messaging routing
-* **Node-RED** — Data Processing, AI Logic & Automation
-* **InfluxDB Cloud** — Cloud Time-Series Database for persistent medical records
-* **Grafana Cloud** — Medical-grade Cloud Dashboard Visualization
+* **Espressif Systems ESP32** :  Main IoT Controller
+* **MQTT Protocol** :  Real-time IoT Communication
+* **Mosquitto MQTT Broker** :  MQTT Broker for messaging routing
+* **Node-RED** :  Data Processing, AI Logic & Automation
+* **InfluxDB Cloud** :  Cloud Time-Series Database for persistent medical records
+* **Grafana Cloud** :  Medical-grade Cloud Dashboard Visualization
 
 ### 2. Firmware
 
-* **ESP32 Arduino Core** — FreeRTOS dual-core, WiFi stack
-* **Arduino IDE** — ESP32 Programming environment
-* **SparkFun Libraries** — MAX30105 (Pulse Ox), APDS9960 (Gesture)
-* **Adafruit Libraries** — SSD1306 (OLED), DHT sensor library
-* **I2Cdev** — MPU6050, BMP085
-* **PubSubClient & ArduinoJson** — MQTT and Payload formatting
+* **ESP32 Arduino Core** :  FreeRTOS dual-core, WiFi stack
+* **Arduino IDE** :  ESP32 Programming environment
+* **SparkFun Libraries** :  MAX30105 (Pulse Ox), APDS9960 (Gesture)
+* **Adafruit Libraries** :  SSD1306 (OLED), DHT sensor library
+* **I2Cdev** :  MPU6050, BMP085
+* **PubSubClient & ArduinoJson** :  MQTT and Payload formatting
 
 ### 3. Frontend Dashboard (Local/Fleet)
 
-* **React 18 + Vite** — Local fleet dashboard
+* **React 18 + Vite** :  Local fleet dashboard
 * **MQTT.js (WebSocket)**
 * **Recharts & Tailwind CSS v4**
 
@@ -340,18 +340,18 @@ npm run dev
 * SSD1306 OLED Display (From MYOSA Kit)
 * APDS9960 Gesture Sensor (From MYOSA Kit)
 * Buzzer & Vibration Motor (10 mm coin)
-* Power Chain: 3.7 V 500 mAh Li-Po Battery x2 — Charging and Boost Converter Module
+* Power Chain: 3.7 V 500 mAh Li-Po Battery x2 :  Charging and Boost Converter Module
 * Misc: BC547 NPN Transistor, 1 kΩ Resistor, Capacitor, Flyback Diode, Wires, USB Cable
 
 ### Software Requirements
 
-* **Arduino IDE** — Programming ESP32 firmware
-* **VS Code** — Source code editor and development environment
-* **Mosquitto MQTT** — Core MQTT Communication routing
-* **Node.js** — Runtime environment required for Node-RED and React
-* **Node-RED** — Visual data flow processing and AI logic
-* **InfluxDB Cloud Account** — Remote Cloud Database for time-series metrics
-* **Grafana Cloud Account** — Dashboard Visualization and alert monitoring
+* **Arduino IDE** :  Programming ESP32 firmware
+* **VS Code** :  Source code editor and development environment
+* **Mosquitto MQTT** :  Core MQTT Communication routing
+* **Node.js** :  Runtime environment required for Node-RED and React
+* **Node-RED** :  Visual data flow processing and AI logic
+* **InfluxDB Cloud Account** :  Remote Cloud Database for time-series metrics
+* **Grafana Cloud Account** :  Dashboard Visualization and alert monitoring
 
 ### Installation
 
